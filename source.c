@@ -1,6 +1,12 @@
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+
 
 #define MAX 30
 
@@ -76,6 +82,18 @@ void sort_data(Data data[MAX])
     }
 }
 
+// This function finds fee-paid people
+void is_paid(Data data[MAX]) {
+    printf("Fee Paid List\n_________________________________________________________________\n");
+    for (int i = 0; i < MAX; i++) {
+        if (strcmp(data[i].pee_paid, "yes") == 0) {
+            printf("%d/%s/%s/%s/%d/%s/%s", data[i].tag, data[i].date, data[i].pee_paid, data[i].name, data[i].age, data[i].organization, data[i].job);
+        }
+    }
+    printf("_________________________________________________________________\n");
+}
+
+
 int main()
 {
     char raw_data[30][1000];
@@ -96,4 +114,6 @@ int main()
 
     fclose(fp);
     fclose(sorted_fp);
+
+    is_paid(data);
 }
