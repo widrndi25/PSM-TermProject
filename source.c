@@ -6,8 +6,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-
-
 #define MAX 30
 
 // Data structure Define
@@ -15,7 +13,7 @@ typedef struct _Data
 {
     int tag;
     char date[11];
-    char pee_paid[5];
+    char fee_paid[5];
     char name[20];
     int age;
     char organization[50];
@@ -56,7 +54,7 @@ void split_data(char raw_data[MAX][1000], Data data[MAX])
 
         data[i].tag = atoi(tokens[0]);
         strcpy(data[i].date, tokens[1]);
-        strcpy(data[i].pee_paid, tokens[2]);
+        strcpy(data[i].fee_paid, tokens[2]);
         strcpy(data[i].name, tokens[3]);
         data[i].age = atoi(tokens[4]);
         strcpy(data[i].organization, tokens[5]);
@@ -83,16 +81,18 @@ void sort_data(Data data[MAX])
 }
 
 // This function finds fee-paid people
-void is_paid(Data data[MAX]) {
+void is_paid(Data data[MAX])
+{
     printf("Fee Paid List\n_________________________________________________________________\n");
-    for (int i = 0; i < MAX; i++) {
-        if (strcmp(data[i].pee_paid, "yes") == 0) {
-            printf("%d/%s/%s/%s/%d/%s/%s", data[i].tag, data[i].date, data[i].pee_paid, data[i].name, data[i].age, data[i].organization, data[i].job);
+    for (int i = 0; i < MAX; i++)
+    {
+        if (strcmp(data[i].fee_paid, "yes") == 0)
+        {
+            printf("%d/%s/%s/%s/%d/%s/%s", data[i].tag, data[i].date, data[i].fee_paid, data[i].name, data[i].age, data[i].organization, data[i].job);
         }
     }
     printf("_________________________________________________________________\n");
 }
-
 
 int main()
 {
@@ -110,7 +110,7 @@ int main()
 
     // Write data to file
     for (int i = 0; i < MAX; i++)
-        fprintf(sorted_fp, "%d/%s/%s/%s/%d/%s/%s", data[i].tag, data[i].date, data[i].pee_paid, data[i].name, data[i].age, data[i].organization, data[i].job);
+        fprintf(sorted_fp, "%d/%s/%s/%s/%d/%s/%s", data[i].tag, data[i].date, data[i].fee_paid, data[i].name, data[i].age, data[i].organization, data[i].job);
 
     fclose(fp);
     fclose(sorted_fp);
