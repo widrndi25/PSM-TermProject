@@ -24,18 +24,17 @@ typedef struct _Data
 typedef struct _Node
 {
     Data data;
-    struct _Node* next;
+    struct _Node *next;
 } Node;
 
-
 // This function opens file and returns file pointer
-FILE* open_file(char* address, char* mode)
+FILE *open_file(char *address, char *mode)
 {
-    FILE* fp = fopen(address, mode);
+    FILE *fp = fopen(address, mode);
 
     if (fp == NULL)
     {
-        printf("Error opening file\n");
+        printf("Error opening %s file.\n", address);
         exit(1);
     }
 
@@ -48,8 +47,10 @@ void split_data(char raw_data[MAX][1000], Data data[MAX])
     for (int i = 0; i < MAX; i++)
     {
         int count = 0;
-        char* token = strtok(raw_data[i], "/");
-        char tokens[7][100] = { 0 };
+
+        // Split raw data by '/'
+        char *token = strtok(raw_data[i], "/");
+        char tokens[7][100] = {0};
 
         while (count < 7)
         {
@@ -72,6 +73,7 @@ void split_data(char raw_data[MAX][1000], Data data[MAX])
 void sort_data(Data data[MAX])
 {
     Data temp;
+
     for (int i = 0; i < MAX; i++)
     {
         for (int j = 0; j < MAX - i - 1; j++)
@@ -86,20 +88,19 @@ void sort_data(Data data[MAX])
     }
 }
 
-
 // This function finds fee-paid people
-void is_paid(Node* head)
+void is_paid(Node *head)
 {
     printf("Fee Paid List\n_________________________________________________________________\n");
 
-    Node* current = head->next;
+    Node *current = head->next;
 
     while (current != NULL)
     {
         if (strcmp(current->data.fee_paid, "yes") == 0)
         {
             printf("%d/%s/%s/%s/%d/%s/%s", current->data.tag, current->data.date, current->data.fee_paid,
-                current->data.name, current->data.age, current->data.organization, current->data.job);
+                   current->data.name, current->data.age, current->data.organization, current->data.job);
         }
 
         current = current->next;
@@ -108,21 +109,23 @@ void is_paid(Node* head)
     printf("_________________________________________________________________\n");
 }
 
-
-
-// This function inserts a node into the linked list
-void insert_node(Node* head, Data data)
+// This function inserts a node into the linked list.
+void insert_node(Node *head, Data data)
 {
-    Node* new = (Node*)malloc(sizeof(Node)), *ptr;
-    if (new == NULL) {
-        printf("Error");
+    Node *new = (Node *)malloc(sizeof(Node)), *ptr;
+    if (new == NULL)
+    {
+        printf("Error allocating memory. (insert_node)\n");
         exit(1);
     }
+    // Insert data into new node
     new->data = data;
     new->next = NULL;
     ptr = head;
 
-    while (ptr->next != NULL) {
+    // Find the last node
+    while (ptr->next != NULL)
+    {
         ptr = ptr->next;
     }
 
@@ -130,10 +133,10 @@ void insert_node(Node* head, Data data)
 }
 
 // This function makes free memory allocated for the linked list
-void free_linked_list(Node* head)
+void free_linked_list(Node *head)
 {
-    Node* current = head;
-    Node* next;
+    Node *current = head;
+    Node *next;
 
     while (current != NULL)
     {
@@ -143,14 +146,12 @@ void free_linked_list(Node* head)
     }
 }
 
-
-
 int main()
 {
     char raw_data[30][1000];
     Data data[MAX];
-    FILE* fp = open_file("data/registration_data.txt", "r");
-    FILE* sorted_fp = open_file("data/sorted_data.txt", "w");
+    FILE *fp = open_file("data/registration_data.txt", "r");
+    FILE *sorted_fp = open_file("data/sorted_data.txt", "w");
 
     // Read data from file
     for (int i = 0; i < MAX; i++)
@@ -163,23 +164,26 @@ int main()
     for (int i = 0; i < MAX; i++)
         fprintf(sorted_fp, "%d/%s/%s/%s/%d/%s/%s", data[i].tag, data[i].date, data[i].fee_paid, data[i].name, data[i].age, data[i].organization, data[i].job);
 
+    // Close file
     fclose(fp);
     fclose(sorted_fp);
 
     // Set dummy Head
-    Node* head = (Node*)malloc(sizeof(Node));
-    if (head == NULL) {
-        printf("Error");
+    Node *head = (Node *)malloc(sizeof(Node));
+    if (head == NULL)
+    {
+        printf("Error allocating memory. (head)\n");
         exit(1);
     }
     head->next = NULL;
 
     // Link the data
-    for (int i = 0; i < MAX; i++) {
+    for (int i = 0; i < MAX; i++)
         insert_node(head, data[i]);
-    }
 
-     is_paid(head);
+    // function call
+    is_paid(head);
+    free_linked_list(head);
 
-     free_linked_list(head);
+    return 0;
 }
