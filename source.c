@@ -98,7 +98,7 @@ void is_paid(Node* head)
     {
         if (strcmp(current->data.fee_paid, "yes") == 0)
         {
-            printf("%d/%s/%s/%s/%d/%s/%s\n", current->data.tag, current->data.date, current->data.fee_paid,
+            printf("%d/%s/%s/%s/%d/%s/%s", current->data.tag, current->data.date, current->data.fee_paid,
                 current->data.name, current->data.age, current->data.organization, current->data.job);
         }
 
@@ -111,34 +111,22 @@ void is_paid(Node* head)
 
 
 // This function inserts a node into the linked list
-Node* insert_node(Node* head, Data data)
+void insert_node(Node* head, Data data)
 {
-    Node* new_node = NULL;
-    new_node = (Node*)malloc(sizeof(Node));
-
-    if (new_node == NULL)
-    {
-        printf("Memory allocation error\n");
+    Node* new = (Node*)malloc(sizeof(Node)), *ptr;
+    if (new == NULL) {
+        printf("Error");
         exit(1);
     }
+    new->data = data;
+    new->next = NULL;
+    ptr = head;
 
-    new_node->data = data;
-
-    if (head == NULL)
-    {
-        head = (Node*)malloc(sizeof(Node));
-        if (head == NULL)
-        {
-            printf("Memory allocation error\n");
-            exit(1);
-        }
-        head->next = NULL;
+    while (ptr->next != NULL) {
+        ptr = ptr->next;
     }
 
-    new_node->next = head->next;
-    head->next = new_node;
-
-    return head;
+    ptr->next = new;
 }
 
 // This function makes free memory allocated for the linked list
@@ -154,6 +142,8 @@ void free_linked_list(Node* head)
         current = next;
     }
 }
+
+
 
 int main()
 {
@@ -171,18 +161,25 @@ int main()
 
     // Write data to file
     for (int i = 0; i < MAX; i++)
-        fprintf(sorted_fp, "%d/%s/%s/%s/%d/%s/%s\n", data[i].tag, data[i].date, data[i].fee_paid, data[i].name, data[i].age, data[i].organization, data[i].job);
+        fprintf(sorted_fp, "%d/%s/%s/%s/%d/%s/%s", data[i].tag, data[i].date, data[i].fee_paid, data[i].name, data[i].age, data[i].organization, data[i].job);
 
     fclose(fp);
     fclose(sorted_fp);
 
-    Node* head = NULL;
-    for (int i = 0; i < MAX; i++)
-        head = insert_node(head, data[i]);
+    // Set dummy Head
+    Node* head = (Node*)malloc(sizeof(Node));
+    if (head == NULL) {
+        printf("Error");
+        exit(1);
+    }
+    head->next = NULL;
 
-    is_paid(head);
+    // Link the data
+    for (int i = 0; i < MAX; i++) {
+        insert_node(head, data[i]);
+    }
 
-    free_linked_list(head);
+     is_paid(head);
 
-    return 0;
+     free_linked_list(head);
 }
