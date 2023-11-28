@@ -28,3 +28,5 @@
 13/2022-06-03/yes/Cho/68/Gachon University/student
 28/2022-08-27/no/Park/43/University of Pennsylvania/student
 20/2022-07-30/yes/Kim/52/Gachon University/engineer
+31/2022-08-07/yes/dongbin/20/Gachon University/student
+31/2022-11-30/yes/Kang/25/Gachon University/Student

@@ -7,7 +7,9 @@
 #include <string.h>
 
 #define MAX 30
-int extra_count = 1; // extra people check
+
+// extra people count
+int extra_count = 1;
 
 // Data structure Define
 typedef struct _Data
@@ -25,14 +27,13 @@ typedef struct _Data
 typedef struct _Node
 {
     Data data;
-    struct _Node* next;
+    struct _Node *next;
 } Node;
 
 // This function opens file and returns file pointer
-FILE* open_file(char* address, char* mode)
+FILE *open_file(char *address, char *mode)
 {
-    FILE* fp = fopen(address, mode);
-
+    FILE *fp = fopen(address, mode);
     if (fp == NULL)
     {
         printf("Error opening %s file.\n", address);
@@ -42,6 +43,7 @@ FILE* open_file(char* address, char* mode)
     return fp;
 }
 
+// P1
 // This function splits raw data into data structure
 void split_data(char raw_data[MAX][1000], Data data[MAX])
 {
@@ -50,8 +52,8 @@ void split_data(char raw_data[MAX][1000], Data data[MAX])
         int count = 0;
 
         // Split raw data by '/'
-        char* token = strtok(raw_data[i], "/");
-        char tokens[7][100] = { 0 };
+        char *token = strtok(raw_data[i], "/");
+        char tokens[7][100] = {0};
 
         while (count < 7)
         {
@@ -70,6 +72,7 @@ void split_data(char raw_data[MAX][1000], Data data[MAX])
     }
 }
 
+// P1
 // This function sorts data by age using bubble sort
 void sort_data(Data data[MAX])
 {
@@ -89,34 +92,14 @@ void sort_data(Data data[MAX])
     }
 }
 
-// This function finds fee-paid people
-void is_paid(Node* head)
-{
-    printf("Fee Paid List\n_________________________________________________________________\n");
-
-    Node* current = head->next;
-
-    while (current != NULL)
-    {
-        if (strcmp(current->data.fee_paid, "yes") == 0)
-        {
-            printf("%d/%s/%s/%s/%d/%s/%s", current->data.tag, current->data.date, current->data.fee_paid,
-                current->data.name, current->data.age, current->data.organization, current->data.job);
-        }
-
-        current = current->next;
-    }
-
-    printf("_________________________________________________________________\n");
-}
-
+// P2
 // This function inserts a node into the linked list.
-void insert_node(Node* head, Data data)
+void insert_node(Node *head, Data data)
 {
-    Node* new = (Node*)malloc(sizeof(Node)), * ptr;
+    Node *new = (Node *)malloc(sizeof(Node)), *ptr;
     if (new == NULL)
     {
-        printf("Error allocating memory. (insert_node)\n");
+        printf("Error allocating memory. function: insert_node\n");
         exit(1);
     }
     // Insert data into new node
@@ -126,26 +109,48 @@ void insert_node(Node* head, Data data)
 
     // Find the last node
     while (ptr->next != NULL)
-    {
         ptr = ptr->next;
-    }
 
     ptr->next = new;
 }
 
+// P3
+// This function finds fee-paid people
+void is_paid(Node *head)
+{
+    printf("P2 \n");
+    printf("Fee Paid List\n_________________________________________________________________\n");
 
-void add_human(Node* head) {
+    Node *current = head->next;
 
-    // insert extra human's information
-    FILE* fp = open_file("data/registration_data.txt", "a");
+    while (current != NULL)
+    {
+        if (strcmp(current->data.fee_paid, "yes") == 0)
+            printf("%d/%s/%s/%s/%d/%s/%s", current->data.tag, current->data.date, current->data.fee_paid,
+                   current->data.name, current->data.age, current->data.organization, current->data.job);
 
-    if (fp == NULL) {
-        printf("file could not be opend! \n");
+        current = current->next;
+    }
+
+    printf("_________________________________________________________________\n");
+}
+
+// P5
+// This function adds extra human's information
+void add_human(Node *head)
+{
+    // open file
+    FILE *fp = open_file("data/registration_data.txt", "a");
+    if (fp == NULL)
+    {
+        printf("Error Opening the file. (function: add_human) \n");
         exit(1);
     }
 
-    Data extra = { MAX + extra_count, "2022-08-07", "yes","dongbin", 20, "Gachon University", "student\n" };
+    // extra human's data
+    Data extra = {MAX + extra_count, "2022-11-30", "yes", "Kang", 25, "Gachon University", "Student"};
 
+    // 문제파악 오류 파일에 쓰는 것이 아닌 Linked list에 추가후 출력해야함.
     fprintf(fp, "%d/%s/%s/%s/%d/%s/%s", extra.tag, extra.date, extra.fee_paid, extra.name, extra.age, extra.organization, extra.job);
 
     extra_count++;
@@ -153,39 +158,41 @@ void add_human(Node* head) {
     fclose(fp);
 
     // extra human's node
-    Node* extra_node = (Node*)malloc(sizeof(Node));
-    if (extra_node == NULL) {
-        printf("malloc error!");
+    Node *extra_node = (Node *)malloc(sizeof(Node));
+    if (extra_node == NULL)
+    {
+        printf("Error allocating memory! (extra_node) \n");
         exit(1);
     }
 
     extra_node->data = extra, extra_node->next = NULL;
 
-    Node* ptr = head->next, * prev_ptr = head;
+    Node *ptr = head->next, *prev_ptr = head;
 
     // extra human's age check
-    while (ptr) {
-        if ((ptr->next->data.age) < (extra_node->data.age)) {
+    // FIX sort 함수를 call 해서 사용하면 더 좋을듯 합니다.
+    while (ptr)
+    {
+        if ((ptr->next->data.age) < (extra_node->data.age))
+        {
             prev_ptr = ptr;
             ptr = ptr->next;
         }
-        else if ((ptr->next->data.age) >= (extra_node->data.age)) {
+        else if ((ptr->next->data.age) >= (extra_node->data.age))
+        {
             break;
         }
     }
 
     prev_ptr->next = extra_node;
     extra_node->next = ptr;
-
-
 }
 
-
 // This function makes free memory allocated for the linked list
-void free_linked_list(Node* head)
+void free_linked_list(Node *head)
 {
-    Node* current = head;
-    Node* next;
+    Node *current = head;
+    Node *next;
 
     while (current != NULL)
     {
@@ -199,8 +206,8 @@ int main()
 {
     char raw_data[30][1000];
     Data data[MAX];
-    FILE* fp = open_file("data/registration_data.txt", "r");
-    FILE* sorted_fp = open_file("data/sorted_data.txt", "w");
+    FILE *fp = open_file("data/registration_data.txt", "r");
+    FILE *sorted_fp = open_file("data/P1.txt", "w");
 
     // Read data from file
     for (int i = 0; i < MAX; i++)
@@ -218,15 +225,15 @@ int main()
     fclose(sorted_fp);
 
     // Set dummy Head
-    Node* head = (Node*)malloc(sizeof(Node));
+    Node *head = (Node *)malloc(sizeof(Node));
     if (head == NULL)
     {
-        printf("Error allocating memory. (head)\n");
+        printf("Error allocating memory. location: Set dummy head)\n");
         exit(1);
     }
     head->next = NULL;
 
-    // Link the data
+    // Making the linked list
     for (int i = 0; i < MAX; i++)
         insert_node(head, data[i]);
 
