@@ -7,6 +7,7 @@
 #include <string.h>
 
 #define MAX 30
+int extra_count = 1; // extra people check
 
 // Data structure Define
 typedef struct _Data
@@ -24,13 +25,13 @@ typedef struct _Data
 typedef struct _Node
 {
     Data data;
-    struct _Node *next;
+    struct _Node* next;
 } Node;
 
 // This function opens file and returns file pointer
-FILE *open_file(char *address, char *mode)
+FILE* open_file(char* address, char* mode)
 {
-    FILE *fp = fopen(address, mode);
+    FILE* fp = fopen(address, mode);
 
     if (fp == NULL)
     {
@@ -49,8 +50,8 @@ void split_data(char raw_data[MAX][1000], Data data[MAX])
         int count = 0;
 
         // Split raw data by '/'
-        char *token = strtok(raw_data[i], "/");
-        char tokens[7][100] = {0};
+        char* token = strtok(raw_data[i], "/");
+        char tokens[7][100] = { 0 };
 
         while (count < 7)
         {
@@ -89,18 +90,18 @@ void sort_data(Data data[MAX])
 }
 
 // This function finds fee-paid people
-void is_paid(Node *head)
+void is_paid(Node* head)
 {
     printf("Fee Paid List\n_________________________________________________________________\n");
 
-    Node *current = head->next;
+    Node* current = head->next;
 
     while (current != NULL)
     {
         if (strcmp(current->data.fee_paid, "yes") == 0)
         {
             printf("%d/%s/%s/%s/%d/%s/%s", current->data.tag, current->data.date, current->data.fee_paid,
-                   current->data.name, current->data.age, current->data.organization, current->data.job);
+                current->data.name, current->data.age, current->data.organization, current->data.job);
         }
 
         current = current->next;
@@ -110,9 +111,9 @@ void is_paid(Node *head)
 }
 
 // This function inserts a node into the linked list.
-void insert_node(Node *head, Data data)
+void insert_node(Node* head, Data data)
 {
-    Node *new = (Node *)malloc(sizeof(Node)), *ptr;
+    Node* new = (Node*)malloc(sizeof(Node)), * ptr;
     if (new == NULL)
     {
         printf("Error allocating memory. (insert_node)\n");
@@ -132,11 +133,59 @@ void insert_node(Node *head, Data data)
     ptr->next = new;
 }
 
+
+void add_human(Node* head) {
+
+    // insert extra human's information
+    FILE* fp = open_file("data/registration_data.txt", "a");
+
+    if (fp == NULL) {
+        printf("file could not be opend! \n");
+        exit(1);
+    }
+
+    Data extra = { MAX + extra_count, "2022-08-07", "yes","dongbin", 20, "Gachon University", "student\n" };
+
+    fprintf(fp, "%d/%s/%s/%s/%d/%s/%s", extra.tag, extra.date, extra.fee_paid, extra.name, extra.age, extra.organization, extra.job);
+
+    extra_count++;
+
+    fclose(fp);
+
+    // extra human's node
+    Node* extra_node = (Node*)malloc(sizeof(Node));
+    if (extra_node == NULL) {
+        printf("malloc error!");
+        exit(1);
+    }
+
+    extra_node->data = extra, extra_node->next = NULL;
+
+    Node* ptr = head->next, * prev_ptr = head;
+
+    // extra human's age check
+    while (ptr) {
+        if ((ptr->next->data.age) < (extra_node->data.age)) {
+            prev_ptr = ptr;
+            ptr = ptr->next;
+        }
+        else if ((ptr->next->data.age) >= (extra_node->data.age)) {
+            break;
+        }
+    }
+
+    prev_ptr->next = extra_node;
+    extra_node->next = ptr;
+
+
+}
+
+
 // This function makes free memory allocated for the linked list
-void free_linked_list(Node *head)
+void free_linked_list(Node* head)
 {
-    Node *current = head;
-    Node *next;
+    Node* current = head;
+    Node* next;
 
     while (current != NULL)
     {
@@ -150,8 +199,8 @@ int main()
 {
     char raw_data[30][1000];
     Data data[MAX];
-    FILE *fp = open_file("data/registration_data.txt", "r");
-    FILE *sorted_fp = open_file("data/sorted_data.txt", "w");
+    FILE* fp = open_file("data/registration_data.txt", "r");
+    FILE* sorted_fp = open_file("data/sorted_data.txt", "w");
 
     // Read data from file
     for (int i = 0; i < MAX; i++)
@@ -169,7 +218,7 @@ int main()
     fclose(sorted_fp);
 
     // Set dummy Head
-    Node *head = (Node *)malloc(sizeof(Node));
+    Node* head = (Node*)malloc(sizeof(Node));
     if (head == NULL)
     {
         printf("Error allocating memory. (head)\n");
@@ -183,6 +232,7 @@ int main()
 
     // function call
     is_paid(head);
+    add_human(head);
     free_linked_list(head);
 
     return 0;
