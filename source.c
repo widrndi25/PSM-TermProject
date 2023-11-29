@@ -30,46 +30,54 @@ typedef struct _Node
     struct _Node *next;
 } Node;
 
+// This function verifies file to prevent error
+void verify_file(FILE *fp, char *address)
+{
+    if (fp == NULL)
+    {
+        printf("Error opening file.\naddress: %s\n", address);
+        exit(1);
+    }
+}
+
+// This function verifies memory to prevent segmentation fault
+void verify_memory(void *ptr)
+{
+    if (ptr == NULL)
+    {
+        printf("Error allocating memory.\n");
+        exit(1);
+    }
+}
+
 // This function opens file and returns file pointer
 FILE *open_file(char *address, char *mode)
 {
     FILE *fp = fopen(address, mode);
-    if (fp == NULL)
-    {
-        printf("Error opening %s file.\n", address);
-        exit(1);
-    }
+    verify_file(fp, address);
 
     return fp;
 }
 
+// This function prints data
+void print_data(Data data)
+{
+    printf("%d/%s/%s/%s/%d/%s/%s \n", data.tag, data.date, data.fee_paid, data.name, data.age, data.organization, data.job);
+}
+
 // P1
-// This function splits raw data into data structure
-void split_data(char raw_data[MAX][1000], Data data[MAX])
+// This function read raw data from file and store it in the data structure
+void read_data(FILE *fp, Data data[MAX])
 {
     for (int i = 0; i < MAX; i++)
-    {
-        int count = 0;
+        fscanf(fp, "%d/%[^/]/%[^/]/%[^/]/%d/%[^/]/%s", &data[i].tag, data[i].date, data[i].fee_paid, data[i].name, &data[i].age, data[i].organization, data[i].job);
+}
 
-        // Split raw data by '/'
-        char *token = strtok(raw_data[i], "/");
-        char tokens[7][100] = {0};
-
-        while (count < 7)
-        {
-            strcpy(tokens[count], token);
-            token = strtok(NULL, "/");
-            count++;
-        }
-
-        data[i].tag = atoi(tokens[0]);
-        strcpy(data[i].date, tokens[1]);
-        strcpy(data[i].fee_paid, tokens[2]);
-        strcpy(data[i].name, tokens[3]);
-        data[i].age = atoi(tokens[4]);
-        strcpy(data[i].organization, tokens[5]);
-        strcpy(data[i].job, tokens[6]);
-    }
+// P1
+// This function write data to file
+void write_data(FILE *fp, Data data)
+{
+    fprintf(fp, "%d/%s/%s/%s/%d/%s/%s \n", data.tag, data.date, data.fee_paid, data.name, data.age, data.organization, data.job);
 }
 
 // P1
@@ -97,11 +105,8 @@ void sort_data(Data data[MAX])
 void insert_node(Node *head, Data data)
 {
     Node *new = (Node *)malloc(sizeof(Node)), *ptr;
-    if (new == NULL)
-    {
-        printf("Error allocating memory. function: insert_node\n");
-        exit(1);
-    }
+    verify_memory(new);
+
     // Insert data into new node
     new->data = data;
     new->next = NULL;
@@ -126,8 +131,7 @@ void is_paid(Node *head)
     while (current != NULL)
     {
         if (strcmp(current->data.fee_paid, "yes") == 0)
-            printf("%d/%s/%s/%s/%d/%s/%s", current->data.tag, current->data.date, current->data.fee_paid,
-                   current->data.name, current->data.age, current->data.organization, current->data.job);
+            print_data(current->data);
 
         current = current->next;
     }
@@ -141,17 +145,12 @@ void add_human(Node *head)
 {
     // open file
     FILE *fp = open_file("data/registration_data.txt", "a");
-    if (fp == NULL)
-    {
-        printf("Error Opening the file. (function: add_human) \n");
-        exit(1);
-    }
 
     // extra human's data
     Data extra = {MAX + extra_count, "2022-11-30", "yes", "Kang", 25, "Gachon University", "Student"};
 
     // 문제파악 오류 파일에 쓰는 것이 아닌 Linked list에 추가후 출력해야함.
-    fprintf(fp, "%d/%s/%s/%s/%d/%s/%s", extra.tag, extra.date, extra.fee_paid, extra.name, extra.age, extra.organization, extra.job);
+    print_data(extra);
 
     extra_count++;
 
@@ -159,11 +158,7 @@ void add_human(Node *head)
 
     // extra human's node
     Node *extra_node = (Node *)malloc(sizeof(Node));
-    if (extra_node == NULL)
-    {
-        printf("Error allocating memory! (extra_node) \n");
-        exit(1);
-    }
+    verify_memory(extra_node);
 
     extra_node->data = extra, extra_node->next = NULL;
 
@@ -204,21 +199,16 @@ void free_linked_list(Node *head)
 
 int main()
 {
-    char raw_data[30][1000];
     Data data[MAX];
     FILE *fp = open_file("data/registration_data.txt", "r");
     FILE *sorted_fp = open_file("data/P1.txt", "w");
 
-    // Read data from file
-    for (int i = 0; i < MAX; i++)
-        fgets(raw_data[i], 1000, fp);
-
-    split_data(raw_data, data);
+    read_data(fp, data);
     sort_data(data);
 
     // Write data to file
     for (int i = 0; i < MAX; i++)
-        fprintf(sorted_fp, "%d/%s/%s/%s/%d/%s/%s", data[i].tag, data[i].date, data[i].fee_paid, data[i].name, data[i].age, data[i].organization, data[i].job);
+        write_data(sorted_fp, data[i]);
 
     // Close file
     fclose(fp);
@@ -226,11 +216,7 @@ int main()
 
     // Set dummy Head
     Node *head = (Node *)malloc(sizeof(Node));
-    if (head == NULL)
-    {
-        printf("Error allocating memory. location: Set dummy head)\n");
-        exit(1);
-    }
+    verify_memory(head);
     head->next = NULL;
 
     // Making the linked list
