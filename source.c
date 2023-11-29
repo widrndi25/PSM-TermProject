@@ -144,7 +144,7 @@ void is_paid(Node* head)
 void add_human(Node* head)
 {
     // extra human's data   /  The original must be scanned.
-    Data extra = { MAX + extra_count, "2022-11-30", "yes", "Kang", 25, "Gachon University", "Student" };
+    Data extra = { MAX + extra_count, "2022-11-30", "yes", "Kang", 30, "Gachon University", "Student" };
 
     printf("Extra human's data\n");
     print_data(extra);
@@ -162,7 +162,7 @@ void add_human(Node* head)
     // extra human's node insert ( use linked list )
     while (ptr)
     {
-        if ((ptr->next->data.age) < (extra_node->data.age))
+        if ((ptr->data.age) < (extra_node->data.age))
         {
             prev_ptr = ptr;
             ptr = ptr->next;
