@@ -139,6 +139,32 @@ void is_paid(Node* head)
     printf("_________________________________________________________________\n");
 }
 
+// P4
+// This function deletes nodes with a specific job (e.g., "staff")
+void delete_nodes_with_job(Node* head, char* job)
+{
+    Node* current = head->next;
+    Node* prev = head;
+
+    while (current != NULL)
+    {
+        if (strcmp(current->data.job, job) == 0)
+        {
+            prev->next = current->next;
+            free(current);
+            current = prev->next;
+        }
+        else
+        {
+            prev = current;
+            current = current->next;
+            print_data(current)
+        }
+    }
+
+
+}
+
 // P5
 // This function adds extra human's information
 void add_human(Node* head)
@@ -216,6 +242,9 @@ int main()
     // Making the linked list
     for (int i = 0; i < MAX; i++)
         insert_node(head, data[i]);
+
+    // function call to delete nodes with job "staff"
+    delete_nodes_with_job(head, "staff");
 
     // function call
     is_paid(head);
