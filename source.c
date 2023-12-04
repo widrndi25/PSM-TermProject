@@ -8,10 +8,10 @@
 
 #define MAX 30
 
-// extra people count
+// extra people count.
 int extra_count = 1;
 
-// Data structure Define
+// Data structure Define.
 typedef struct _Data
 {
     int tag;
@@ -23,14 +23,14 @@ typedef struct _Data
     char job[20];
 } Data;
 
-// Linked list node structure
+// Linked list node structure.
 typedef struct _Node
 {
     Data data;
     struct _Node *next;
 } Node;
 
-// This function verifies file to prevent error
+// This function verifies file to prevent error.
 void verify_file(FILE *fp, char *address)
 {
     if (fp == NULL)
@@ -40,7 +40,7 @@ void verify_file(FILE *fp, char *address)
     }
 }
 
-// This function verifies memory to prevent segmentation fault
+// This function verifies memory to prevent segmentation fault.
 void verify_memory(void *ptr)
 {
     if (ptr == NULL)
@@ -50,7 +50,7 @@ void verify_memory(void *ptr)
     }
 }
 
-// This function opens file and returns file pointer
+// This function opens file and returns file pointer.
 FILE *open_file(char *address, char *mode)
 {
     FILE *fp = fopen(address, mode);
@@ -59,14 +59,14 @@ FILE *open_file(char *address, char *mode)
     return fp;
 }
 
-// This function prints data
+// This function prints data.
 void print_data(Data data)
 {
     printf("%d/%s/%s/%s/%d/%s/%s \n", data.tag, data.date, data.fee_paid, data.name, data.age, data.organization, data.job);
 }
 
 // P1
-// This function read raw data from file and store it in the data structure
+// This function read raw data from file and store it in the data structure.
 void read_data(FILE *fp, Data data[MAX])
 {
     for (int i = 0; i < MAX; i++)
@@ -74,14 +74,14 @@ void read_data(FILE *fp, Data data[MAX])
 }
 
 // P1
-// This function write data to file
+// This function write data to file.
 void write_data(FILE *fp, Data data)
 {
     fprintf(fp, "%d/%s/%s/%s/%d/%s/%s \n", data.tag, data.date, data.fee_paid, data.name, data.age, data.organization, data.job);
 }
 
 // P1
-// This function sorts data by age using bubble sort
+// This function sorts data by age using bubble sort.
 void sort_data(Data data[MAX])
 {
     Data temp;
@@ -119,12 +119,28 @@ void insert_node(Node *head, Data data)
     ptr->next = new;
 }
 
+// P2
+// This function displays the linked list using the sorted data.
+void print_linked_list(Node *head)
+{
+    Node *current = head->next;
+
+    printf("Linked List using the sorted data\n");
+    printf("_________________________________________________________________\n");
+
+    while (current != NULL)
+    {
+        print_data(current->data);
+        current = current->next;
+    }
+
+    printf("_________________________________________________________________\n\n\n");
+}
+
 // P3
-// This function finds fee-paid people
+// This function finds and displays fee-paid people.
 void is_paid(Node *head)
 {
-    printf("_________________________________________________________________\n");
-    printf("P3 \n");
     printf("Fee Paid List\n_________________________________________________________________\n");
 
     Node *current = head->next;
@@ -141,13 +157,11 @@ void is_paid(Node *head)
 }
 
 // P4
+// This function deletes nodes with a specific job (ex: "staff").
 void delete_nodes_with_job(Node *head, char *job)
 {
     Node *current = head->next;
     Node *prev = head;
-
-    printf("\nP4 \n");
-    printf("Delete %s\n_________________________________________________________________\n", job);
 
     while (current != NULL)
     {
@@ -157,17 +171,20 @@ void delete_nodes_with_job(Node *head, char *job)
             free(current);
             current = prev->next;
         }
-        print_data(current->data);
-        prev = current;
-        current = current->next;
+        else
+        {
+            prev = current;
+            current = current->next;
+            print_data(prev->data);
+        }
     }
 }
 
 // P5
-// This function adds extra human's information
+// This function adds extra human's information.
 void add_human(Node *head)
 {
-    // extra human's data   /  The original must be scanned.
+    // extra human's data.
     Data extra = {MAX + extra_count, "2022-11-30", "yes", "Kang", 30, "Gachon University", "Student"};
 
     printf("_________________________________________________________________\n");
@@ -179,7 +196,7 @@ void add_human(Node *head)
 
     extra_count++;
 
-    // extra human's node
+    // extra human's node.
     Node *extra_node = (Node *)malloc(sizeof(Node));
     verify_memory(extra_node);
 
@@ -203,7 +220,7 @@ void add_human(Node *head)
     extra_node->next = ptr;
 }
 
-// This function makes free memory allocated for the linked list
+// This function makes free memory allocated for the linked list.
 void free_linked_list(Node *head)
 {
     Node *current = head;
@@ -223,6 +240,7 @@ int main()
     FILE *fp = open_file("data/registration_data.txt", "r");
     FILE *sorted_fp = open_file("data/P1.txt", "w");
 
+    // P1
     read_data(fp, data);
     sort_data(data);
 
@@ -234,18 +252,26 @@ int main()
     fclose(fp);
     fclose(sorted_fp);
 
-    // Set dummy Head
+    // P2
+    //  Set dummy Head.
     Node *head = (Node *)malloc(sizeof(Node));
     verify_memory(head);
     head->next = NULL;
 
-    // Making the linked list
+    // Making the linked list.
     for (int i = 0; i < MAX; i++)
         insert_node(head, data[i]);
 
-    // function call
+    // Print the linked list.
+    print_linked_list(head);
+
+    // P3
     is_paid(head);
+
+    // P4
     delete_nodes_with_job(head, "staff");
+
+    // P5
     add_human(head);
     free_linked_list(head);
 
