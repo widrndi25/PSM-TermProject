@@ -125,22 +125,21 @@ void print_linked_list(Node *head)
 {
     Node *current = head->next;
 
-    printf("Linked List using the sorted data\n");
-    printf("_________________________________________________________________\n");
-
     while (current != NULL)
     {
         print_data(current->data);
         current = current->next;
     }
 
-    printf("_________________________________________________________________\n\n\n");
+    printf("_________________________________________________________________\n\n");
 }
 
 // P3
 // This function finds and displays fee-paid people.
 void is_paid(Node *head)
 {
+    printf("_________________________________________________________________\n");
+    printf("P3 \n");
     printf("Fee Paid List\n_________________________________________________________________\n");
 
     Node *current = head->next;
@@ -175,7 +174,6 @@ void delete_nodes_with_job(Node *head, char *job)
         {
             prev = current;
             current = current->next;
-            print_data(prev->data);
         }
     }
 }
@@ -186,11 +184,6 @@ void add_human(Node *head)
 {
     // extra human's data.
     Data extra = {MAX + extra_count, "2022-11-30", "yes", "Kang", 30, "Gachon University", "Student"};
-
-    printf("_________________________________________________________________\n");
-    printf("P5 \n");
-    printf("Extra human's data\n");
-    printf("_________________________________________________________________\n");
 
     print_data(extra);
 
@@ -263,17 +256,31 @@ int main()
         insert_node(head, data[i]);
 
     // Print the linked list.
+    printf("_________________________________________________________________\n");
+    printf("P2\n");
+    printf("Linked List using the sorted data\n");
+    printf("_________________________________________________________________\n");
     print_linked_list(head);
 
     // P3
     is_paid(head);
 
     // P4
+    printf("_________________________________________________________________\n");
+    printf("P4\n");
+    printf("Remove staff\n");
+    printf("_________________________________________________________________\n");
     delete_nodes_with_job(head, "staff");
+    print_linked_list(head);
 
     // P5
+    printf("_________________________________________________________________\n");
+    printf("P5 \n");
+    printf("Extra human's data\n");
+    printf("_________________________________________________________________\n");
     add_human(head);
     free_linked_list(head);
+    printf("_________________________________________________________________\n");
 
     return 0;
 }
