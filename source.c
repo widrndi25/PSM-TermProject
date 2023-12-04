@@ -119,11 +119,28 @@ void insert_node(Node* head, Data data)
     ptr->next = new;
 }
 
+// P2
+// This function displays the linked list using the sorted data.
+void print_linked_list(Node* head)
+{
+    Node* current = head->next;
+
+    printf("Linked List using the sorted data\n");
+    printf("_________________________________________________________________\n");
+
+    while (current != NULL)
+    {
+        print_data(current->data);
+        current = current->next;
+    }
+
+    printf("_________________________________________________________________\n\n\n");
+}
+
 // P3
 // This function finds and displays fee-paid people.
 void is_paid(Node* head)
 {
-    printf("P2 \n");
     printf("Fee Paid List\n_________________________________________________________________\n");
 
     Node* current = head->next;
@@ -164,6 +181,7 @@ void delete_nodes_with_job(Node* head, char* job)
 
 
 }
+
 
 // P5
 // This function adds extra human's information.
@@ -243,9 +261,12 @@ int main()
     for (int i = 0; i < MAX; i++)
         insert_node(head, data[i]);
 
+    // Print the linked list.
+    print_linked_list(head);
+
     // P3
     is_paid(head);
-    
+
     // P4
     delete_nodes_with_job(head, "staff");
 
