@@ -182,8 +182,6 @@ void delete_nodes_with_job(Node *head, char *job)
 // This function adds extra human's information.
 void add_human(Node *head, Data extra)
 {
-    print_data(extra);
-
     extra_count++;
 
     // extra human's node.
@@ -275,9 +273,10 @@ int main()
     Data extra = {MAX + extra_count, "2022-11-30", "yes", "Kang", 30, "Gachon University", "Student"};
     printf("_________________________________________________________________\n");
     printf("P5 \n");
-    printf("Extra human's data\n");
+    printf("Add human's data\n");
     printf("_________________________________________________________________\n");
     add_human(head, extra);
+    print_linked_list(head);
     free_linked_list(head);
     printf("_________________________________________________________________\n");
 
