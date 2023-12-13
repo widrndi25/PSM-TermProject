@@ -270,7 +270,7 @@ int main()
 
     // P5
     // extra human's data.
-    Data extra = {MAX + extra_count, "2022-11-30", "yes", "Kang", 30, "Gachon University", "Student"};
+    Data extra = {MAX + extra_count, "2022-11-30", "yes", "Kang", 25, "Gachon University", "Student"};
     printf("_________________________________________________________________\n");
     printf("P5 \n");
     printf("Add human's data\n");
